@@ -6,6 +6,10 @@
       "destination": "/api"
     },
     {
+      "source": "/refreshLink",
+      "destination": "/api"
+    },
+    {
       "source": "/go/(.*)",
       "destination": "/api"
     },

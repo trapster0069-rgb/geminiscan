@@ -18,5 +18,25 @@
     "createdAt": "2026-10-24T18:05:31.665Z",
     "usedAt": "2026-10-24T18:05:31.678Z",
     "accessCount": 1
+  },
+  "gm_refreshtest": {
+    "shortId": "gm_refreshtest",
+    "token": "AQCP_google_partner_test_123",
+    "mobile": "9876543210",
+    "type": "basic",
+    "status": "active",
+    "createdAt": "2026-10-24T18:31:33.240Z",
+    "usedAt": null,
+    "accessCount": 1
+  },
+  "AQCP_google_partner_test_123": {
+    "shortId": "gm_refreshtest",
+    "token": "AQCP_google_partner_test_123",
+    "mobile": "9876543210",
+    "type": "basic",
+    "status": "active",
+    "createdAt": "2026-10-24T18:31:33.240Z",
+    "usedAt": null,
+    "accessCount": 1
   }
 }

@@ -3,122 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Activate Google Gemini Pro | GeminiScan AI Portal</title>
+  <title>Activate Google Gemini Pro | GeminiScan</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    :root {
-      --bg-dark: #060911;
-      --card-bg: rgba(15, 23, 42, 0.88);
-      --accent-blue: #38bdf8;
-      --accent-purple: #818cf8;
-      --accent-green: #22c55e;
-      --accent-red: #ef4444;
-      --accent-amber: #f59e0b;
-      --text-main: #f1f5f9;
-      --text-muted: #94a3b8;
-    }
-
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background: var(--bg-dark);
-      background-image: 
-        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.12) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.12) 0px, transparent 50%);
-      color: var(--text-main);
+      background: #060911;
+      color: #f1f5f9;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 20px;
     }
-
-    .container {
-      width: 100%;
-      max-width: 480px;
-      margin: 0 auto;
-    }
-
     .card {
-      background: var(--card-bg);
-      backdrop-filter: blur(28px);
-      -webkit-backdrop-filter: blur(28px);
-      border: 1px solid rgba(56, 189, 248, 0.22);
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(24px);
+      border: 1px solid rgba(56, 189, 248, 0.25);
       border-radius: 28px;
-      padding: 34px 26px;
+      padding: 36px 28px;
+      max-width: 460px;
+      width: 100%;
       text-align: center;
-      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 40px rgba(56, 189, 248, 0.1);
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.85), 0 0 40px rgba(59, 130, 246, 0.15);
       position: relative;
       overflow: hidden;
-      transition: all 0.3s ease;
     }
-
     .card::before {
       content: '';
       position: absolute;
-      top: -120px;
+      top: -100px;
       left: 50%;
       transform: translateX(-50%);
-      width: 280px;
-      height: 280px;
-      background: radial-gradient(circle, rgba(56, 189, 248, 0.2) 0%, transparent 70%);
+      width: 250px;
+      height: 250px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, transparent 70%);
       z-index: 0;
       pointer-events: none;
     }
-
     .content { position: relative; z-index: 1; }
-
-    /* Top sync header */
-    .top-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
-      font-size: 12px;
-    }
-
-    .realtime-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(34, 197, 94, 0.12);
-      border: 1px solid rgba(34, 197, 94, 0.3);
-      padding: 4px 12px;
-      border-radius: 999px;
-      color: #4ade80;
-      font-weight: 600;
-      letter-spacing: 0.3px;
-    }
-
-    .live-dot {
-      width: 8px;
-      height: 8px;
-      background: #22c55e;
-      border-radius: 50%;
-      box-shadow: 0 0 10px #22c55e;
-      animation: pulse 1.8s infinite;
-    }
-
-    .live-dot.used {
-      background: #ef4444;
-      box-shadow: 0 0 10px #ef4444;
-      animation: none;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(0.95); opacity: 0.8; }
-      50% { transform: scale(1.3); opacity: 1; }
-      100% { transform: scale(0.95); opacity: 0.8; }
-    }
-
-    .domain-tag {
-      color: #64748b;
-      font-family: monospace;
-      font-size: 11px;
-    }
-
-    .offer-badge {
+    .logo-badge {
       display: inline-flex;
       align-items: center;
       gap: 8px;
@@ -127,27 +53,25 @@
       color: #38bdf8;
       border: 1px solid rgba(56, 189, 248, 0.3);
       border-radius: 9999px;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 700;
       letter-spacing: 0.5px;
       text-transform: uppercase;
-      margin-bottom: 14px;
+      margin-bottom: 18px;
     }
-
     h1 {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 26px;
-      font-weight: 800;
-      line-height: 1.25;
-      margin-bottom: 6px;
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 8px;
       background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-
     .sub-tier {
       color: #818cf8;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 600;
       margin-bottom: 22px;
       display: flex;
@@ -155,110 +79,68 @@
       justify-content: center;
       gap: 6px;
     }
-
-    /* Status Alert Cards */
-    .status-card {
-      border-radius: 18px;
-      padding: 16px 18px;
-      margin-bottom: 20px;
-      text-align: left;
-      transition: all 0.3s ease;
-    }
-
-    .status-card.active {
-      background: rgba(10, 25, 20, 0.85);
+    .validity-box {
+      background: rgba(10, 15, 29, 0.85);
       border: 1px solid rgba(34, 197, 94, 0.4);
-    }
-
-    .status-card.used {
-      background: rgba(35, 14, 14, 0.9);
-      border: 1px solid rgba(239, 68, 68, 0.5);
-    }
-
-    .status-card.expired {
-      background: rgba(35, 24, 10, 0.9);
-      border: 1px solid rgba(245, 158, 11, 0.5);
-    }
-
-    .status-head {
+      border-radius: 18px;
+      padding: 16px 20px;
+      margin-bottom: 22px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 6px;
+      transition: all 0.3s ease;
     }
-
-    .status-title {
-      font-size: 12px;
-      font-weight: 800;
+    .validity-box.used {
+      border-color: rgba(239, 68, 68, 0.5);
+      background: rgba(28, 12, 12, 0.85);
+    }
+    .validity-left { text-align: left; }
+    .validity-label {
+      font-size: 11px;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.6px;
+      letter-spacing: 0.8px;
+      color: #4ade80;
       display: flex;
       align-items: center;
       gap: 6px;
     }
-
-    .status-card.active .status-title { color: #4ade80; }
-    .status-card.used .status-title { color: #f87171; }
-    .status-card.expired .status-title { color: #fbbf24; }
-
-    .status-pill-badge {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 12px;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 8px;
+    .validity-box.used .validity-label {
+      color: #f87171;
     }
-
-    .status-card.active .status-pill-badge {
-      color: #22c55e;
-      background: rgba(34, 197, 94, 0.2);
-      border: 1px solid rgba(34, 197, 94, 0.4);
-    }
-
-    .status-card.used .status-pill-badge {
-      color: #ef4444;
-      background: rgba(239, 68, 68, 0.2);
-      border: 1px solid rgba(239, 68, 68, 0.4);
-    }
-
-    .status-card.expired .status-pill-badge {
-      color: #f59e0b;
-      background: rgba(245, 158, 11, 0.2);
-      border: 1px solid rgba(245, 158, 11, 0.4);
-    }
-
-    .status-desc {
+    .validity-sub {
       font-size: 13px;
       color: #94a3b8;
-      line-height: 1.45;
+      margin-top: 2px;
     }
-
-    /* Meta Info Rows */
-    .info-box {
-      background: rgba(2, 6, 23, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 14px;
-      padding: 12px 16px;
-      margin-bottom: 20px;
+    .validity-badge {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: #22c55e;
+      background: rgba(34, 197, 94, 0.15);
+      padding: 6px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(34, 197, 94, 0.3);
     }
-
-    .info-row {
+    .validity-box.used .validity-badge {
+      color: #ef4444;
+      background: rgba(239, 68, 68, 0.15);
+      border-color: rgba(239, 68, 68, 0.4);
+    }
+    .info-pill {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      padding: 6px 0;
+      padding: 12px 16px;
+      background: rgba(2, 6, 23, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
       font-size: 13px;
+      margin-bottom: 12px;
     }
-
-    .info-row:not(:last-child) {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .info-row span:first-child { color: var(--text-muted); }
-    .info-row span:last-child { color: var(--text-main); font-weight: 600; }
-
-    /* Action Buttons */
-    .btn-main {
+    .info-pill span:first-child { color: #94a3b8; }
+    .info-pill span:last-child { color: #f8fafc; font-weight: 600; font-family: monospace; }
+    .activate-btn {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -268,52 +150,19 @@
       background: linear-gradient(135deg, #2563eb 0%, #4f46e5 50%, #7c3aed 100%);
       color: #ffffff;
       font-weight: 700;
-      font-size: 15px;
+      font-size: 16px;
       text-decoration: none;
-      border: none;
       border-radius: 16px;
       box-shadow: 0 10px 30px -5px rgba(79, 70, 229, 0.6);
-      cursor: pointer;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      margin-bottom: 16px;
+      margin-top: 10px;
+      margin-bottom: 18px;
+      cursor: pointer;
     }
-
-    .btn-main:hover {
+    .activate-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 15px 35px -5px rgba(79, 70, 229, 0.85);
     }
-
-    .btn-disabled {
-      background: #334155;
-      color: #94a3b8;
-      cursor: not-allowed;
-      box-shadow: none;
-      transform: none !important;
-    }
-
-    .btn-secondary {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-      padding: 12px 18px;
-      background: rgba(30, 41, 59, 0.7);
-      color: #cbd5e1;
-      font-size: 13px;
-      font-weight: 600;
-      text-decoration: none;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      transition: background 0.2s;
-      margin-bottom: 18px;
-    }
-
-    .btn-secondary:hover {
-      background: rgba(51, 65, 85, 0.9);
-      color: #ffffff;
-    }
-
     .guidance-box {
       background: rgba(15, 23, 42, 0.6);
       border-radius: 14px;
@@ -324,80 +173,52 @@
       line-height: 1.6;
       border: 1px solid rgba(255, 255, 255, 0.05);
     }
-
     .guidance-box strong { color: #f1f5f9; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="card">
-      <div class="content">
+  <div class="card">
+    <div class="content">
+      <div class="logo-badge" id="logoBadge">
+        ✨ Google Gemini Pro Offer
+      </div>
+      <h1>1-Year Gemini Advanced</h1>
+      <div class="sub-tier">
+        <span id="tierLabel">🛡️ Official Partner Activation Link</span>
+      </div>
 
-        <!-- Top Realtime Bar -->
-        <div class="top-bar">
-          <div class="realtime-pill" id="realtimePill">
-            <span class="live-dot" id="statusDot"></span>
-            <span id="realtimeLabel">Realtime Sync Active</span>
+      <!-- 24-Hour Active Status Banner -->
+      <div class="validity-box" id="validityBox">
+        <div class="validity-left">
+          <div class="validity-label" id="statusLabel">
+            <span id="statusDot" style="display:inline-block; width:8px; height:8px; background:#22c55e; border-radius:50%; box-shadow:0 0 8px #22c55e;"></span>
+            Active Link Protected
           </div>
-          <div class="domain-tag">geminiscan.vercel.app</div>
+          <div class="validity-sub" id="statusSub">Guaranteed Active Status</div>
         </div>
+        <div class="validity-badge" id="statusBadge">24H Active</div>
+      </div>
 
-        <div class="offer-badge" id="offerBadge">
-          ✨ Official Google Gemini Pro Offer
-        </div>
+      <div class="info-pill">
+        <span>Link Category:</span>
+        <span id="categoryVal" style="color:#38bdf8;">1-Year Gemini Pro</span>
+      </div>
 
-        <h1>1-Year Gemini Advanced</h1>
-        <div class="sub-tier">
-          <span id="tierLabel">🛡️ Official Partner Activation Link</span>
-        </div>
+      <div class="info-pill">
+        <span>Linked Mobile:</span>
+        <span id="mobileVal">+91 **********</span>
+      </div>
 
-        <!-- Real-Time Status Card -->
-        <div class="status-card active" id="statusCard">
-          <div class="status-head">
-            <div class="status-title" id="statusTitle">
-              <span>●</span> 24H Active Link Protected
-            </div>
-            <div class="status-pill-badge" id="statusBadge">Active</div>
-          </div>
-          <div class="status-desc" id="statusDesc">
-            Verified partner token. Guaranteed active and ready to claim on your Google account.
-          </div>
-        </div>
+      <!-- Direct Activation Button (Always accessible even if expired) -->
+      <a class="activate-btn" href="#" id="activateBtn" target="_blank" rel="noopener noreferrer">
+        🚀 Open Google Activation Portal
+      </a>
 
-        <!-- Metadata Box -->
-        <div class="info-box">
-          <div class="info-row">
-            <span>Link Category:</span>
-            <span id="categoryVal" style="color: #38bdf8;">Basic Link</span>
-          </div>
-          <div class="info-row">
-            <span>Linked Mobile:</span>
-            <span id="mobileVal" style="font-family: monospace;">+91 **********</span>
-          </div>
-          <div class="info-row">
-            <span>Short ID:</span>
-            <span id="shortIdVal" style="font-family: monospace; color: #a855f7;">--</span>
-          </div>
-        </div>
-
-        <!-- Primary Action Button -->
-        <a class="btn-main" href="#" id="activateBtn" target="_blank" rel="noopener noreferrer">
-          🚀 Activate 1-Year Gemini Pro Now
-        </a>
-
-        <!-- Bot Fallback / Refresh Button -->
-        <a class="btn-secondary" href="https://t.me/Geminiplusss_robot" target="_blank" id="botActionBtn">
-          🤖 Open Telegram Bot (@Geminiplusss_robot)
-        </a>
-
-        <!-- Guidance Box -->
-        <div class="guidance-box" id="guideBox">
-          <strong>💡 Activation Instructions:</strong><br>
-          1. Tap <b>"Activate Now"</b> above to open Google's official partner gateway.<br>
-          2. Log in with the Google Account you wish to upgrade to Gemini Advanced.<br>
-          3. Tap <b>"Accept &amp; Activate"</b> to lock in 12 months of Gemini Advanced AI + 2TB Google One benefits!
-        </div>
-
+      <div class="guidance-box">
+        <strong>💡 Activation Instructions:</strong><br>
+        1. Tap the button above to launch Google's official partner page.<br>
+        2. Make sure you are signed in to the Google account you wish to upgrade.<br>
+        3. Click <b>"Accept &amp; Activate"</b> to lock in your 12-Month Gemini Pro benefits!
       </div>
     </div>
   </div>
@@ -408,164 +229,93 @@
       const search = window.location.search;
       const urlParams = new URLSearchParams(search);
 
-      let key = "";
-      const matchNewGm = path.match(/\/new\/gm\/([^/?#]+)/);
-      if (matchNewGm) {
-        key = matchNewGm[1];
-      } else {
+      let key = urlParams.get("id") || urlParams.get("token") || "";
+      if (!key) {
         const pathTokenMatch = path.match(/(AQCP[a-zA-Z0-9_\-+=]{40,})/);
         if (pathTokenMatch) {
           key = pathTokenMatch[1];
-        } else if (urlParams.get("token")) {
-          key = urlParams.get("token");
-        } else if (urlParams.get("id")) {
-          key = urlParams.get("id");
+        } else if (path.includes("/new/gm/")) {
+          key = path.split("/new/gm/")[1].split("?")[0].split("/")[0];
         }
       }
-
-      if (key) {
-        document.getElementById("shortIdVal").innerText = key.length > 18 ? (key.slice(0, 10) + "...") : key;
-      }
-
-      const initialType = (urlParams.get("type") || "basic").toLowerCase();
-      const isReactivation = initialType === "reactivation";
-      updateTypeUI(isReactivation ? "Reactivation Link" : "Basic Link", isReactivation);
 
       const rawMobile = urlParams.get("m") || urlParams.get("mobile") || "";
       if (rawMobile && rawMobile.length >= 10) {
-        const cleanDigits = rawMobile.replace(/\D/g, '').slice(-10);
-        document.getElementById("mobileVal").innerText = "+91 " + cleanDigits.slice(0, 5) + "*****";
+        const clean = rawMobile.replace(/\D/g, '').slice(-10);
+        document.getElementById("mobileVal").innerText = "+91 " + clean.slice(0, 5) + "*****";
       }
 
-      let currentStatus = "checking";
-
-      function updateTypeUI(label, isReactivation) {
-        document.getElementById("categoryVal").innerText = label;
-        document.getElementById("categoryVal").style.color = isReactivation ? "#c084fc" : "#38bdf8";
-        document.getElementById("tierLabel").innerText = "🛡️ " + label + " • Official Partner Link";
-        document.getElementById("offerBadge").innerText = "✨ Google Gemini Pro " + (isReactivation ? "Reactivation" : "Offer");
+      function setGoogleLink(targetUrl) {
+        if (!targetUrl) return;
+        const btn = document.getElementById("activateBtn");
+        btn.href = targetUrl;
+        btn.innerText = "🚀 Open Google Activation Portal";
       }
 
-      function applyStatusUI(status, details) {
-        const statusCard = document.getElementById("statusCard");
-        const statusTitle = document.getElementById("statusTitle");
-        const statusBadge = document.getElementById("statusBadge");
-        const statusDesc = document.getElementById("statusDesc");
-        const statusDot = document.getElementById("statusDot");
-        const activateBtn = document.getElementById("activateBtn");
-        const realtimeLabel = document.getElementById("realtimeLabel");
+      function markAsUsedUI(usedAt) {
+        const box = document.getElementById("validityBox");
+        const lbl = document.getElementById("statusLabel");
+        const sub = document.getElementById("statusSub");
+        const bdg = document.getElementById("statusBadge");
+        const dot = document.getElementById("statusDot");
 
-        currentStatus = status;
-
-        if (status === "active") {
-          statusCard.className = "status-card active";
-          statusTitle.innerHTML = "<span>●</span> 24H Active Link Protected";
-          statusBadge.innerText = "Active";
-          statusDesc.innerText = "Verified partner token. Guaranteed active and ready to claim on your Google account.";
-          statusDot.className = "live-dot";
-          realtimeLabel.innerText = "Realtime Sync: Active";
-
-          activateBtn.className = "btn-main";
-          activateBtn.innerText = "🚀 Activate 1-Year Gemini Pro Now";
-          if (details && details.targetUrl) {
-            activateBtn.href = details.targetUrl;
-          } else if (key && key.startsWith("AQCP")) {
-            activateBtn.href = "https://serviceactivation.google.com/subscription/new/" + key;
-          } else {
-            activateBtn.href = "/go/" + encodeURIComponent(key);
-          }
-
-        } else if (status === "used") {
-          statusCard.className = "status-card used";
-          statusTitle.innerHTML = "<span>⚠️</span> ALREADY USED / CLAIMED";
-          statusBadge.innerText = "Claimed";
-          const usedTimeStr = details && details.usedAt ? (" Claimed on: " + new Date(details.usedAt).toLocaleTimeString()) : "";
-          statusDesc.innerHTML = "<b>🚫 This Google Gemini voucher has ALREADY been used / redeemed on an account.</b>" + usedTimeStr;
-          statusDot.className = "live-dot used";
-          realtimeLabel.innerText = "Status: Claimed";
-
-          activateBtn.className = "btn-main btn-disabled";
-          activateBtn.innerText = "🔒 Voucher Already Claimed";
-          activateBtn.removeAttribute("href");
-
-          document.getElementById("botActionBtn").innerText = "🔄 Request Fresh Voucher via Bot";
-
-        } else if (status === "expired") {
-          statusCard.className = "status-card expired";
-          statusTitle.innerHTML = "<span>⌛</span> LINK EXPIRED";
-          statusBadge.innerText = "Expired";
-          statusDesc.innerText = "The Google partner activation window has expired. Generate a fresh link instantly with 1 tap in our Telegram bot.";
-          statusDot.className = "live-dot used";
-          realtimeLabel.innerText = "Status: Expired";
-
-          activateBtn.className = "btn-main btn-disabled";
-          activateBtn.innerText = "⚠️ Link Expired";
-          activateBtn.removeAttribute("href");
-
-          document.getElementById("botActionBtn").innerText = "🔄 Re-generate Fresh Link via Bot";
-        }
-
-        if (details) {
-          if (details.mobile && details.mobile !== "+91 **********") {
-            document.getElementById("mobileVal").innerText = details.mobile;
-          }
-          if (details.type) {
-            const isRe = details.type.toLowerCase() === "reactivation";
-            updateTypeUI(isRe ? "Reactivation Link" : "Basic Link", isRe);
-          }
-        }
+        box.className = "validity-box used";
+        dot.style.background = "#ef4444";
+        dot.style.boxShadow = "0 0 8px #ef4444";
+        lbl.innerText = "⚠️ Link Already Claimed / Used";
+        sub.innerText = usedAt ? ("Redeemed on " + new Date(usedAt).toLocaleTimeString()) : "Offer already used on an account";
+        bdg.innerText = "Claimed";
       }
 
-      document.getElementById("activateBtn").addEventListener("click", function(e) {
-        if (currentStatus === "used" || currentStatus === "expired") {
-          e.preventDefault();
-          alert("This activation link has already been claimed or expired.");
-          return;
-        }
+      if (key && key.startsWith("AQCP") && key.length > 50) {
+        setGoogleLink("https://serviceactivation.google.com/subscription/new/" + key);
+      }
 
+      if (key) {
+        fetch("/api/link-status?id=" + encodeURIComponent(key))
+          .then(r => r.json())
+          .then(data => {
+            if (data && data.found) {
+              const googleToken = data.token || "";
+              if (googleToken) {
+                setGoogleLink("https://serviceactivation.google.com/subscription/new/" + googleToken);
+              }
+              if (data.mobile && data.mobile !== "+91 **********") {
+                document.getElementById("mobileVal").innerText = data.mobile;
+              }
+              if (data.status === "used") {
+                markAsUsedUI(data.usedAt);
+              }
+            } else if (!key.startsWith("AQCP")) {
+              fetch("/api/refreshLink", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id: key })
+              })
+              .then(res => res.json())
+              .then(ref => {
+                if (ref && ref.link) {
+                  setGoogleLink(ref.link);
+                }
+              })
+              .catch(() => {});
+            }
+          })
+          .catch(() => {});
+      } else {
+        document.getElementById("activateBtn").innerText = "🤖 Open Telegram Bot";
+        document.getElementById("activateBtn").href = "https://t.me/Geminiplusss_robot";
+      }
+
+      document.getElementById("activateBtn").addEventListener("click", function() {
         if (key) {
           fetch("/api/mark-used", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ id: key, token: key })
-          }).catch(function(err) {
-            console.warn("Mark used ping error:", err);
-          });
-
-          setTimeout(function() {
-            applyStatusUI("used", { usedAt: new Date().toISOString() });
-          }, 1200);
+          }).catch(() => {});
         }
       });
-
-      async function checkLiveStatus() {
-        if (!key) return;
-
-        try {
-          const res = await fetch("/api/link-status?id=" + encodeURIComponent(key) + "&token=" + encodeURIComponent(key));
-          if (!res.ok) return;
-
-          const data = await res.json();
-          if (data && data.success) {
-            const googleUrl = data.token ? ("https://serviceactivation.google.com/subscription/new/" + data.token) : "";
-            applyStatusUI(data.status, {
-              mobile: data.mobile,
-              type: data.type,
-              usedAt: data.usedAt,
-              targetUrl: googleUrl
-            });
-          } else if (key.startsWith("AQCP") && key.length > 50) {
-            applyStatusUI("active", {
-              targetUrl: "https://serviceactivation.google.com/subscription/new/" + key
-            });
-          }
-        } catch (err) {
-          console.warn("[Realtime] Status fetch error:", err);
-        }
-      }
-
-      checkLiveStatus();
-      setInterval(checkLiveStatus, 4000);
     })();
   </script>
 </body>
