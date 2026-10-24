@@ -1,65 +1,257 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Personal Website</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        body {
-            background-color: #0f172a;
-            color: #f8fafc;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .container {
-            text-align: center;
-            background: #1e293b;
-            padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            max-width: 400px;
-            width: 90%;
-        }
-        h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-            color: #38bdf8;
-        }
-        p {
-            color: #94a3b8;
-            font-size: 16px;
-            margin-bottom: 20px;
-        }
-        .btn {
-            display: inline-block;
-            background: #38bdf8;
-            color: #0f172a;
-            padding: 10px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-        .btn:hover {
-            background: #0ea5e9;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Activate Google Gemini Pro | GeminiScan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: #060911;
+      color: #f1f5f9;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .card {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(24px);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 28px;
+      padding: 36px 28px;
+      max-width: 460px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.85), 0 0 40px rgba(59, 130, 246, 0.15);
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 250px;
+      height: 250px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, transparent 70%);
+      z-index: 0;
+      pointer-events: none;
+    }
+    .content { position: relative; z-index: 1; }
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: rgba(56, 189, 248, 0.1);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .sub-tier {
+      color: #818cf8;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .validity-box {
+      background: rgba(10, 15, 29, 0.85);
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      border-radius: 18px;
+      padding: 16px 20px;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .validity-left { text-align: left; }
+    .validity-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #4ade80;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .validity-sub {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+    .validity-badge {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: #22c55e;
+      background: rgba(34, 197, 94, 0.15);
+      padding: 6px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+    .info-pill {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: rgba(2, 6, 23, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+    .info-pill span:first-child { color: #94a3b8; }
+    .info-pill span:last-child { color: #f8fafc; font-weight: 600; font-family: monospace; }
+    .activate-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 16px 20px;
+      background: linear-gradient(135deg, #2563eb 0%, #4f46e5 50%, #7c3aed 100%);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 16px;
+      text-decoration: none;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px -5px rgba(79, 70, 229, 0.6);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      margin-top: 10px;
+      margin-bottom: 18px;
+    }
+    .activate-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 35px -5px rgba(79, 70, 229, 0.85);
+    }
+    .guidance-box {
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 14px;
+      padding: 14px 16px;
+      text-align: left;
+      font-size: 12px;
+      color: #94a3b8;
+      line-height: 1.6;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .guidance-box strong { color: #f1f5f9; }
+  </style>
 </head>
 <body>
+  <div class="card">
+    <div class="content">
+      <div class="logo-badge" id="logoBadge">
+        ✨ Google Gemini Pro Offer
+      </div>
+      <h1>1-Year Gemini Advanced</h1>
+      <div class="sub-tier">
+        <span id="tierLabel">🛡️ Official Partner Activation Link</span>
+      </div>
 
-    <div class="container">
-        <h1>Welcome to My Website!</h1>
-        <p>Ye meri pehli website hai jo maine GitHub aur Vercel ki madad se live ki hai.</p>
-        <a href="#" class="btn">Contact Me</a>
+      <!-- 24-Hour Active Status Banner -->
+      <div class="validity-box">
+        <div class="validity-left">
+          <div class="validity-label">
+            <span style="display:inline-block; width:8px; height:8px; background:#22c55e; border-radius:50%; box-shadow:0 0 8px #22c55e;"></span>
+            Active Link Protected
+          </div>
+          <div class="validity-sub">Guaranteed Active Status</div>
+        </div>
+        <div class="validity-badge">24H Active</div>
+      </div>
+
+      <div class="info-pill">
+        <span>Link Category:</span>
+        <span id="categoryVal" style="color:#38bdf8;">Basic Link</span>
+      </div>
+
+      <div class="info-pill">
+        <span>Linked Mobile:</span>
+        <span id="mobileVal">+91 **********</span>
+      </div>
+
+      <!-- Direct Activation Button -->
+      <a class="activate-btn" href="#" id="activateBtn" target="_blank" rel="noopener noreferrer">
+        🚀 Open Google Activation Portal
+      </a>
+
+      <div class="guidance-box">
+        <strong>💡 Activation Instructions:</strong><br>
+        1. Tap the button above to launch Google's official partner page.<br>
+        2. Make sure you are signed in to the Google account you wish to upgrade.<br>
+        3. Click <b>"Accept &amp; Activate"</b> to lock in your 12-Month Gemini Pro benefits!
+      </div>
     </div>
+  </div>
 
+  <script>
+    (function() {
+      // 1. Extract Token from URL path (/new/gm/<token>) or query param
+      const path = window.location.pathname;
+      const search = window.location.search;
+      const urlParams = new URLSearchParams(search);
+
+      let token = "";
+      const pathTokenMatch = path.match(/(AQCP[a-zA-Z0-9_\-+=]{40,})/);
+      if (pathTokenMatch) {
+        token = pathTokenMatch[1];
+      } else if (path.includes("/new/gm/")) {
+        token = path.split("/new/gm/")[1].split("?")[0].split("/")[0];
+      } else if (urlParams.get("token")) {
+        token = urlParams.get("token");
+      }
+
+      // 2. Extract Type (Basic vs Reactivation)
+      const typeParam = (urlParams.get("type") || "basic").toLowerCase();
+      const isReactivation = typeParam === "reactivation";
+      const typeLabel = isReactivation ? "Reactivation Link" : "Basic Link";
+
+      document.getElementById("categoryVal").innerText = typeLabel;
+      document.getElementById("categoryVal").style.color = isReactivation ? "#c084fc" : "#38bdf8";
+      document.getElementById("logoBadge").innerText = "✨ Google Gemini Pro " + (isReactivation ? "Reactivation" : "Offer");
+      document.getElementById("tierLabel").innerText = "🛡️ " + typeLabel + " • Official Partner Link";
+
+      // 3. Extract & Mask Mobile
+      const rawMobile = urlParams.get("m") || urlParams.get("mobile") || "";
+      if (rawMobile && rawMobile.length >= 10) {
+        const clean = rawMobile.replace(/\D/g, '').slice(-10);
+        document.getElementById("mobileVal").innerText = "+91 " + clean.slice(0, 5) + "*****";
+      }
+
+      // 4. Set Target URL
+      if (token) {
+        const googleUrl = "https://serviceactivation.google.com/subscription/new/" + token;
+        document.getElementById("activateBtn").href = googleUrl;
+      } else {
+        document.getElementById("activateBtn").innerText = "🤖 Open Telegram Bot";
+        document.getElementById("activateBtn").href = "https://t.me/Geminiplusss_robot";
+      }
+    })();
+  </script>
 </body>
 </html>
