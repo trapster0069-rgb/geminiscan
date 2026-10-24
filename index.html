@@ -140,6 +140,15 @@
     }
     .info-pill span:first-child { color: #94a3b8; }
     .info-pill span:last-child { color: #f8fafc; font-weight: 600; font-family: monospace; }
+    
+    /* Buttons */
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+      margin-bottom: 18px;
+    }
     .activate-btn {
       display: flex;
       align-items: center;
@@ -152,17 +161,35 @@
       font-weight: 700;
       font-size: 16px;
       text-decoration: none;
+      border: none;
       border-radius: 16px;
       box-shadow: 0 10px 30px -5px rgba(79, 70, 229, 0.6);
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      margin-top: 10px;
-      margin-bottom: 18px;
       cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
     .activate-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 15px 35px -5px rgba(79, 70, 229, 0.85);
     }
+    .activate-btn:active {
+      transform: scale(0.98);
+    }
+    .activate-btn.secondary {
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: #38bdf8;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      font-size: 14px;
+      padding: 13px 18px;
+    }
+    .activate-btn.secondary:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: #38bdf8;
+      color: #ffffff;
+    }
+
     .guidance-box {
       background: rgba(15, 23, 42, 0.6);
       border-radius: 14px;
@@ -209,34 +236,47 @@
         <span id="mobileVal">+91 **********</span>
       </div>
 
-      <!-- Direct Activation Button (Always accessible even if expired) -->
-      <a class="activate-btn" href="#" id="activateBtn" target="_blank" rel="noopener noreferrer">
-        🚀 Open Google Activation Portal
-      </a>
+      <!-- Button Group (Primary & Open Link Anyway) -->
+      <div class="btn-group">
+        <a class="activate-btn" href="#" id="activateBtn" target="_blank" rel="noopener noreferrer">
+          🚀 Open Google Activation Portal
+        </a>
+        <a class="activate-btn secondary" href="#" id="openAnywayBtn" target="_blank" rel="noopener noreferrer">
+          ⚡ Open Link Anyway (Direct Google)
+        </a>
+      </div>
 
       <div class="guidance-box">
         <strong>💡 Activation Instructions:</strong><br>
-        1. Tap the button above to launch Google's official partner page.<br>
+        1. Tap any button above to launch Google's official partner page.<br>
         2. Make sure you are signed in to the Google account you wish to upgrade.<br>
-        3. Click <b>"Accept &amp; Activate"</b> to lock in your 12-Month Gemini Pro benefits!
+        3. Click <b>"Accept &amp; Activate"</b> to lock in your 12-Month Gemini Pro benefits!<br>
+        <i>(Note: Aap button par multiple times click kar sakte hain).</i>
       </div>
     </div>
   </div>
 
   <script>
     (function() {
-      // 1. Extract Token or ID from URL path or query params
+      // 1. Extract Token or ID from URL query parameters, pathname, or hash
       const path = window.location.pathname;
       const search = window.location.search;
+      const hash = window.location.hash;
       const urlParams = new URLSearchParams(search);
 
-      let key = urlParams.get("id") || urlParams.get("token") || "";
+      let key = urlParams.get("id") || urlParams.get("token") || urlParams.get("t") || "";
+      if (!key && hash) {
+        const hashParams = new URLSearchParams(hash.replace(/^#\/?/, ''));
+        key = hashParams.get("id") || hashParams.get("token") || hashParams.get("t") || "";
+      }
       if (!key) {
-        const pathTokenMatch = path.match(/(AQCP[a-zA-Z0-9_\-+=]{40,})/);
+        const pathTokenMatch = (path + search + hash).match(/(AQCP[a-zA-Z0-9_\-+=]{40,})/);
         if (pathTokenMatch) {
           key = pathTokenMatch[1];
         } else if (path.includes("/new/gm/")) {
           key = path.split("/new/gm/")[1].split("?")[0].split("/")[0];
+        } else if (path.includes("/go/")) {
+          key = path.split("/go/")[1].split("?")[0].split("/")[0];
         }
       }
 
@@ -247,51 +287,68 @@
         document.getElementById("mobileVal").innerText = "+91 " + clean.slice(0, 5) + "*****";
       }
 
-      function setGoogleLink(targetUrl) {
-        if (!targetUrl) return;
-        const btn = document.getElementById("activateBtn");
-        btn.href = targetUrl;
-        btn.innerText = "🚀 Open Google Activation Portal";
+      const activateBtn = document.getElementById("activateBtn");
+      const openAnywayBtn = document.getElementById("openAnywayBtn");
+
+      let resolvedTargetUrl = "";
+
+      // Check if direct token is available
+      const directToken = urlParams.get("t") || (key && key.startsWith("AQCP") ? key : "");
+      if (directToken) {
+        resolvedTargetUrl = "https://serviceactivation.google.com/subscription/new/" + directToken;
+      } else if (key) {
+        resolvedTargetUrl = "/go/" + encodeURIComponent(key);
+      } else {
+        resolvedTargetUrl = "https://t.me/Geminiplusss_robot";
       }
 
-      function markAsUsedUI(usedAt) {
-        const box = document.getElementById("validityBox");
-        const lbl = document.getElementById("statusLabel");
-        const sub = document.getElementById("statusSub");
-        const bdg = document.getElementById("statusBadge");
-        const dot = document.getElementById("statusDot");
+      // Set immediate href on both buttons
+      activateBtn.href = resolvedTargetUrl;
+      openAnywayBtn.href = resolvedTargetUrl;
 
-        box.className = "validity-box used";
-        dot.style.background = "#ef4444";
-        dot.style.boxShadow = "0 0 8px #ef4444";
-        lbl.innerText = "⚠️ Link Already Claimed / Used";
-        sub.innerText = usedAt ? ("Redeemed on " + new Date(usedAt).toLocaleTimeString()) : "Offer already used on an account";
-        bdg.innerText = "Claimed";
+      if (!key) {
+        activateBtn.innerText = "🤖 Open Telegram Bot";
+        openAnywayBtn.style.display = "none";
       }
 
-      // Direct fallback if raw token
-      if (key && key.startsWith("AQCP") && key.length > 50) {
-        setGoogleLink("https://serviceactivation.google.com/subscription/new/" + key);
+      function applyResolvedUrl(googleUrl) {
+        if (!googleUrl) return;
+        resolvedTargetUrl = googleUrl;
+        activateBtn.href = googleUrl;
+        openAnywayBtn.href = googleUrl;
       }
 
-      // Real-time lookup & anti-expiry verification
+      // Realtime lookup from server API
       if (key) {
         fetch("/api/link-status?id=" + encodeURIComponent(key))
           .then(r => r.json())
           .then(data => {
             if (data && data.found) {
-              const googleToken = data.token || "";
-              if (googleToken) {
-                setGoogleLink("https://serviceactivation.google.com/subscription/new/" + googleToken);
+              if (data.token) {
+                applyResolvedUrl("https://serviceactivation.google.com/subscription/new/" + data.token);
               }
               if (data.mobile && data.mobile !== "+91 **********") {
                 document.getElementById("mobileVal").innerText = data.mobile;
               }
               if (data.status === "used") {
-                markAsUsedUI(data.usedAt);
+                const box = document.getElementById("validityBox");
+                const lbl = document.getElementById("statusLabel");
+                const sub = document.getElementById("statusSub");
+                const bdg = document.getElementById("statusBadge");
+
+                if (box) box.className = "validity-box used";
+                if (lbl) {
+                  lbl.innerHTML = '<span style="display:inline-block; width:8px; height:8px; background:#ef4444; border-radius:50%; box-shadow:0 0 8px #ef4444; margin-right:6px;"></span>⚠️ Link Already Claimed';
+                }
+                if (sub) {
+                  sub.innerText = data.usedAt ? ("Redeemed on " + new Date(data.usedAt).toLocaleTimeString()) : "Offer already used on an account";
+                }
+                if (bdg) {
+                  bdg.innerText = "Claimed";
+                  bdg.style.color = "#ef4444";
+                }
               }
             } else if (!key.startsWith("AQCP")) {
-              // Try refreshLink endpoint
               fetch("/api/refreshLink", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -300,28 +357,43 @@
               .then(res => res.json())
               .then(ref => {
                 if (ref && ref.link) {
-                  setGoogleLink(ref.link);
+                  applyResolvedUrl(ref.link);
                 }
               })
               .catch(() => {});
             }
           })
           .catch(() => {});
-      } else {
-        document.getElementById("activateBtn").innerText = "🤖 Open Telegram Bot";
-        document.getElementById("activateBtn").href = "https://t.me/Geminiplusss_robot";
       }
 
-      // When user clicks the button, also notify mark-used
-      document.getElementById("activateBtn").addEventListener("click", function() {
-        if (key) {
-          fetch("/api/mark-used", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id: key, token: key })
-          }).catch(() => {});
+      // Allows clicking MULTIPLE TIMES with zero bugs or freezing!
+      // Native navigation avoids popup blockers on mobile browsers & Telegram webview.
+      function handleActionClick(e) {
+        const target = resolvedTargetUrl || this.getAttribute("href") || (key ? ("/go/" + encodeURIComponent(key)) : "");
+
+        if (target && target !== "#" && target !== "javascript:void(0)") {
+          this.href = target;
+
+          // Asynchronously record usage without interfering with user navigation
+          if (key) {
+            try {
+              fetch("/api/mark-used", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id: key, token: key }),
+                keepalive: true
+              }).catch(() => {});
+            } catch(err) {}
+          }
+          // Native click navigation proceeds into new tab or app smoothly!
+          return true;
+        } else {
+          if (e) e.preventDefault();
         }
-      });
+      }
+
+      activateBtn.addEventListener("click", handleActionClick);
+      openAnywayBtn.addEventListener("click", handleActionClick);
     })();
   </script>
 </body>

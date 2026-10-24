@@ -356,7 +356,50 @@ app.get('/go/:tokenOrId', (req, res) => {
 });
 
 // -------------------------------------------------------------
-// 7. Health Check
+// 7. Refresh Link API (activationservice.services compatibility)
+// -------------------------------------------------------------
+function handleRefreshLink(req, res) {
+  const queryId = (req.body?.id || req.query?.id || '').trim();
+  if (!queryId) {
+    return res.status(400).json({ error: 'Missing id' });
+  }
+
+  let record = linkStore.get(queryId);
+  if (!record) {
+    const tokenMatch = queryId.match(/(AQCP[a-zA-Z0-9_\-+=]{40,})/);
+    if (tokenMatch) record = linkStore.get(tokenMatch[1]);
+  }
+
+  if (record) {
+    const targetUrl = `https://serviceactivation.google.com/subscription/new/${record.token}`;
+    record.accessCount = (record.accessCount || 0) + 1;
+    persistStore();
+    return res.json({
+      success: true,
+      link: targetUrl,
+      status: record.status || 'active',
+      refreshed: true
+    });
+  }
+
+  if (queryId.startsWith('AQCP')) {
+    return res.json({
+      success: true,
+      link: `https://serviceactivation.google.com/subscription/new/${queryId}`,
+      refreshed: true
+    });
+  }
+
+  return res.status(404).json({ error: 'Link not found for refresh' });
+}
+
+app.post('/refreshLink', handleRefreshLink);
+app.post('/api/refreshLink', handleRefreshLink);
+app.get('/refreshLink', handleRefreshLink);
+app.get('/api/refreshLink', handleRefreshLink);
+
+// -------------------------------------------------------------
+// 8. Health Check
 // -------------------------------------------------------------
 app.get('/health', (req, res) => {
   res.json({
