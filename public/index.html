@@ -2,320 +2,701 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Activate Google Gemini Pro | GeminiScan</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#060818">
+  <title>Taking you to your Google Gemini Pro link | GeminiScan</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #060818;
+      --ink: #f4f6ff;
+      --mute: #9aa6c9;
+      --line: rgba(140, 160, 255, 0.18);
+      --blue: #4c8dff;
+      --violet: #a259ff;
+      --pink: #ff6fd8;
+      --cyan: #38e1d0;
+      --green: #22c55e;
+      --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-display: 'Space Grotesk', sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; height: 100%; }
     body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background: #060911;
-      color: #f1f5f9;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      font-family: var(--font-main);
+      color: var(--ink);
+      background: var(--bg);
+      display: grid;
+      place-items: center;
       padding: 20px;
-    }
-    .card {
-      background: rgba(15, 23, 42, 0.85);
-      backdrop-filter: blur(24px);
-      border: 1px solid rgba(56, 189, 248, 0.25);
-      border-radius: 28px;
-      padding: 36px 28px;
-      max-width: 460px;
-      width: 100%;
-      text-align: center;
-      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.85), 0 0 40px rgba(59, 130, 246, 0.15);
       position: relative;
-      overflow: hidden;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
-    .card::before {
-      content: '';
-      position: absolute;
-      top: -100px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 250px;
-      height: 250px;
-      background: radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, transparent 70%);
+
+    /* Ambient Cosmic Aurora */
+    .aurora {
+      position: fixed;
+      inset: -20%;
       z-index: 0;
+      filter: blur(80px);
+      opacity: 0.75;
       pointer-events: none;
     }
-    .content { position: relative; z-index: 1; }
-    .logo-badge {
+    .aurora i {
+      position: absolute;
+      border-radius: 50%;
+      mix-blend-mode: screen;
+    }
+    .aurora i:nth-child(1) {
+      width: 48vmax; height: 48vmax; left: -10%; top: -15%;
+      background: radial-gradient(circle, #2f5bff, transparent 65%);
+      animation: drift1 16s ease-in-out infinite;
+    }
+    .aurora i:nth-child(2) {
+      width: 42vmax; height: 42vmax; right: -8%; top: 10%;
+      background: radial-gradient(circle, #8a3dff, transparent 65%);
+      animation: drift2 19s ease-in-out infinite;
+    }
+    .aurora i:nth-child(3) {
+      width: 36vmax; height: 36vmax; left: 25%; bottom: -18%;
+      background: radial-gradient(circle, #ff5fd0, transparent 68%);
+      opacity: 0.55;
+      animation: drift3 22s ease-in-out infinite;
+    }
+    .grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.45;
+      background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+      background-size: 56px 56px;
+      -webkit-mask-image: radial-gradient(ellipse at 50% 40%, #000 0, transparent 70%);
+      mask-image: radial-gradient(ellipse at 50% 40%, #000 0, transparent 70%);
+    }
+    #stars {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    /* Premium Glassmorphism Card */
+    .card {
+      position: relative;
+      z-index: 1;
+      width: min(100%, 520px);
+      padding: 38px 32px 30px;
+      text-align: center;
+      border-radius: 28px;
+      background: linear-gradient(160deg, rgba(24, 30, 66, 0.78), rgba(10, 13, 34, 0.85));
+      border: 1px solid rgba(150, 170, 255, 0.22);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      box-shadow: 0 30px 90px rgba(10, 10, 60, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      animation: arrive 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+    .card:before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      pointer-events: none;
+      background: conic-gradient(from var(--a, 0deg), transparent 0 60%, var(--blue), var(--violet), var(--pink), transparent 95%);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: spin 6s linear infinite;
+      opacity: 0.9;
+    }
+    @property --a {
+      syntax: "<angle>";
+      inherits: false;
+      initial-value: 0deg;
+    }
+
+    /* Hero Emblem */
+    .emblem {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 20px;
+      display: grid;
+      place-items: center;
+    }
+    .emblem .ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1px dashed rgba(160, 180, 255, 0.35);
+      animation: rot 18s linear infinite;
+    }
+    .emblem .ring.r2 {
+      inset: -14px;
+      border-style: solid;
+      border-color: rgba(162, 89, 255, 0.2);
+      animation-duration: 28s;
+      animation-direction: reverse;
+    }
+    .emblem .tile {
+      position: relative;
+      width: 72px;
+      height: 72px;
+      border-radius: 20px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, #ffffff, #dfe6ff);
+      transform: rotate(-8deg);
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.5), 0 0 35px rgba(90, 120, 255, 0.65), 0 0 80px rgba(162, 89, 255, 0.4);
+      animation: float 3.6s ease-in-out infinite;
+    }
+    .emblem svg {
+      width: 42px;
+      height: 42px;
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+    .spark {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 12px 3px rgba(130, 160, 255, 0.9);
+      animation: twinkle 2.2s ease-in-out infinite;
+    }
+    .spark.s1 { top: -4px; right: 6px; }
+    .spark.s2 { bottom: 4px; left: -6px; animation-delay: 0.7s; background: #ffb5ec; }
+    .spark.s3 { top: 30px; left: -16px; width: 5px; height: 5px; animation-delay: 1.3s; }
+
+    h1 {
+      font-family: var(--font-display);
+      margin: 0;
+      font-size: clamp(24px, 6vw, 30px);
+      line-height: 1.2;
+      letter-spacing: -0.025em;
+      font-weight: 700;
+      background: linear-gradient(100deg, #ffffff 20%, #b9c8ff 45%, #e2b6ff 60%, #ffffff 80%);
+      background-size: 220% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: shine 5s linear infinite;
+    }
+    .intro {
+      margin: 10px auto 0;
+      max-width: 380px;
+      color: var(--mute);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    /* Badge */
+    .badge {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 6px 16px;
-      background: rgba(56, 189, 248, 0.1);
-      color: #38bdf8;
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      border-radius: 9999px;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      margin-bottom: 18px;
+      gap: 10px;
+      margin: 20px 0 0;
+      padding: 10px 22px;
+      border-radius: 16px;
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: -0.01em;
+      background: linear-gradient(100deg, #2f6bff, #7a4dff 55%, #b155ff);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18) inset, 0 10px 30px rgba(110, 80, 255, 0.5);
     }
-    h1 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 24px;
-      font-weight: 700;
-      line-height: 1.3;
-      margin-bottom: 8px;
-      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .badge b { font-size: 24px; font-family: var(--font-display); }
+    .badge svg { width: 20px; height: 20px; fill: #ffffff; animation: crown 2.6s ease-in-out infinite; }
+    .badge:after {
+      content: "";
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 40%; left: -60%;
+      background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+      transform: skewX(-20deg);
+      animation: sweep 3.2s ease-in-out infinite;
     }
-    .sub-tier {
-      color: #818cf8;
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 22px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-    .validity-box {
-      background: rgba(10, 15, 29, 0.85);
-      border: 1px solid rgba(34, 197, 94, 0.4);
-      border-radius: 18px;
-      padding: 16px 20px;
-      margin-bottom: 22px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      transition: all 0.3s ease;
-    }
-    .validity-box.used {
-      border-color: rgba(239, 68, 68, 0.5);
-      background: rgba(28, 12, 12, 0.85);
-    }
-    .validity-left { text-align: left; }
-    .validity-label {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: #4ade80;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .validity-box.used .validity-label {
-      color: #f87171;
-    }
-    .validity-sub {
-      font-size: 13px;
-      color: #94a3b8;
-      margin-top: 2px;
-    }
-    .validity-badge {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      color: #22c55e;
-      background: rgba(34, 197, 94, 0.15);
-      padding: 6px 14px;
-      border-radius: 10px;
-      border: 1px solid rgba(34, 197, 94, 0.3);
-    }
-    .validity-box.used .validity-badge {
-      color: #ef4444;
-      background: rgba(239, 68, 68, 0.15);
-      border-color: rgba(239, 68, 68, 0.4);
-    }
-    .info-pill {
-      display: flex;
-      justify-content: space-between;
-      padding: 12px 16px;
-      background: rgba(2, 6, 23, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 12px;
-      font-size: 13px;
-      margin-bottom: 12px;
-    }
-    .info-pill span:first-child { color: #94a3b8; }
-    .info-pill span:last-child { color: #f8fafc; font-weight: 600; font-family: monospace; }
-    .activate-btn {
+
+    /* Status & Progress Track */
+    .status {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      width: 100%;
-      padding: 16px 20px;
-      background: linear-gradient(135deg, #2563eb 0%, #4f46e5 50%, #7c3aed 100%);
+      margin: 26px 0 12px;
+      color: #cdd6f6;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .status i {
+      width: 12px;
+      height: 12px;
+      border: 2px solid var(--blue);
+      border-right-color: transparent;
+      border-radius: 50%;
+      animation: turn 0.8s linear infinite;
+    }
+    .pct {
+      font-variant-numeric: tabular-nums;
       color: #ffffff;
       font-weight: 700;
-      font-size: 16px;
-      text-decoration: none;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px -5px rgba(79, 70, 229, 0.6);
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      margin-top: 10px;
-      margin-bottom: 18px;
-      cursor: pointer;
+      min-width: 3ch;
+      text-align: right;
     }
-    .activate-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 15px 35px -5px rgba(79, 70, 229, 0.85);
+
+    .track {
+      position: relative;
+      height: 10px;
+      border-radius: 99px;
+      background: rgba(120, 140, 220, 0.16);
+      border: 1px solid rgba(150, 170, 255, 0.2);
+      overflow: hidden;
     }
-    .guidance-box {
-      background: rgba(15, 23, 42, 0.6);
+    .bar {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 8%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #3b82ff, #8b5cff 60%, #ff6fd8);
+      box-shadow: 0 0 18px rgba(139, 92, 255, 0.9);
+      transition: width 0.45s cubic-bezier(0.3, 0.7, 0.2, 1);
+    }
+    .bar:after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.55) 50%, transparent 70%);
+      background-size: 200% 100%;
+      animation: shimmer 1.3s linear infinite;
+    }
+
+    /* 4 Feature Badges */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--line);
+    }
+    .f {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      line-height: 1.25;
+      color: var(--mute);
+      opacity: 0.45;
+      transform: translateY(3px);
+      transition: all 0.4s ease;
+    }
+    .f svg {
+      width: 24px;
+      height: 24px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .f.on {
+      opacity: 1;
+      transform: none;
+      color: #ffffff;
+    }
+    .f.on svg { filter: drop-shadow(0 0 8px currentColor); }
+    .f:nth-child(1).on svg { color: #6ea2ff; }
+    .f:nth-child(2).on svg { color: #c488ff; }
+    .f:nth-child(3).on svg { color: var(--cyan); }
+    .f:nth-child(4).on svg { color: #22c55e; }
+
+    /* Action Buttons (Backup Direct Trigger) */
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 22px;
+    }
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 14px 20px;
       border-radius: 14px;
-      padding: 14px 16px;
-      text-align: left;
-      font-size: 12px;
-      color: #94a3b8;
-      line-height: 1.6;
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
-    .guidance-box strong { color: #f1f5f9; }
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb 0%, #4f46e5 50%, #7c3aed 100%);
+      color: #ffffff;
+      box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.6);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px -5px rgba(79, 70, 229, 0.85);
+    }
+    .btn-secondary {
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: #38bdf8;
+      font-size: 13px;
+      padding: 12px 16px;
+    }
+    .btn-secondary:hover {
+      background: rgba(56, 189, 248, 0.15);
+      color: #ffffff;
+    }
+
+    .error {
+      min-height: 20px;
+      margin: 14px 0 0;
+      color: #ff8d8d;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .retry {
+      display: none;
+      margin-top: 10px;
+      padding: 11px 22px;
+      border: 0;
+      border-radius: 12px;
+      background: linear-gradient(100deg, #3b82ff, #8b5cff);
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(100, 90, 255, 0.45);
+      transition: transform 0.16s ease, filter 0.16s ease;
+    }
+    .retry:hover { transform: translateY(-2px); filter: brightness(1.1); }
+    .retry:disabled { opacity: 0.6; cursor: wait; transform: none; }
+    body.error .status i { border: 0; background: #ff5d5d; animation: none; }
+    body.error .bar { background: linear-gradient(90deg, #ff5d5d, #ff9a5d); box-shadow: 0 0 18px rgba(255, 93, 93, 0.7); }
+    body.error .bar:after { display: none; }
+    body.error .retry { display: inline-block; }
+    body.done .bar { width: 100% !important; }
+
+    @keyframes arrive { from { opacity: 0; transform: translateY(18px) scale(0.97); } to { opacity: 1; transform: none; } }
+    @keyframes spin { to { --a: 360deg; } }
+    @keyframes rot { to { transform: rotate(360deg); } }
+    @keyframes float { 0%, 100% { transform: rotate(-8deg) translateY(0); } 50% { transform: rotate(-4deg) translateY(-7px); } }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.14) rotate(8deg); } }
+    @keyframes twinkle { 0%, 100% { opacity: 0.15; transform: scale(0.6); } 50% { opacity: 1; transform: scale(1.2); } }
+    @keyframes shine { to { background-position: -220% 0; } }
+    @keyframes sweep { 0% { left: -60%; } 60%, 100% { left: 130%; } }
+    @keyframes crown { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-2px) rotate(-8deg); } }
+    @keyframes turn { to { transform: rotate(360deg); } }
+    @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+    @keyframes drift1 { 50% { transform: translate(12%, 10%) scale(1.15); } }
+    @keyframes drift2 { 50% { transform: translate(-14%, 12%) scale(0.9); } }
+    @keyframes drift3 { 50% { transform: translate(10%, -14%) scale(1.2); } }
+
+    @media (max-width: 520px) {
+      body { padding: 16px; }
+      .card { padding: 30px 20px 24px; border-radius: 22px; }
+      .features { grid-template-columns: repeat(2, 1fr); gap: 14px 6px; }
+      .badge { font-size: 16px; }
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="content">
-      <div class="logo-badge" id="logoBadge">
-        ✨ Google Gemini Pro Offer
-      </div>
-      <h1>1-Year Gemini Advanced</h1>
-      <div class="sub-tier">
-        <span id="tierLabel">🛡️ Official Partner Activation Link</span>
-      </div>
+  <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="grid" aria-hidden="true"></div>
+  <canvas id="stars" aria-hidden="true"></canvas>
 
-      <!-- 24-Hour Active Status Banner -->
-      <div class="validity-box" id="validityBox">
-        <div class="validity-left">
-          <div class="validity-label" id="statusLabel">
-            <span id="statusDot" style="display:inline-block; width:8px; height:8px; background:#22c55e; border-radius:50%; box-shadow:0 0 8px #22c55e;"></span>
-            Active Link Protected
-          </div>
-          <div class="validity-sub" id="statusSub">Guaranteed Active Status</div>
-        </div>
-        <div class="validity-badge" id="statusBadge">24H Active</div>
-      </div>
-
-      <div class="info-pill">
-        <span>Link Category:</span>
-        <span id="categoryVal" style="color:#38bdf8;">1-Year Gemini Pro</span>
-      </div>
-
-      <div class="info-pill">
-        <span>Linked Mobile:</span>
-        <span id="mobileVal">+91 **********</span>
-      </div>
-
-      <!-- Direct Activation Button (Always accessible even if expired) -->
-      <a class="activate-btn" href="#" id="activateBtn" target="_blank" rel="noopener noreferrer">
-        🚀 Open Google Activation Portal
-      </a>
-
-      <div class="guidance-box">
-        <strong>💡 Activation Instructions:</strong><br>
-        1. Tap the button above to launch Google's official partner page.<br>
-        2. Make sure you are signed in to the Google account you wish to upgrade.<br>
-        3. Click <b>"Accept &amp; Activate"</b> to lock in your 12-Month Gemini Pro benefits!
+  <main class="card" aria-labelledby="title">
+    <div class="emblem" aria-hidden="true">
+      <div class="ring r2"></div><div class="ring"></div>
+      <span class="spark s1"></span><span class="spark s2"></span><span class="spark s3"></span>
+      <div class="tile">
+        <svg viewBox="0 0 24 24">
+          <defs>
+            <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#2f7bff"/>
+              <stop offset="0.55" stop-color="#8a5cff"/>
+              <stop offset="1" stop-color="#ff6fd8"/>
+            </linearGradient>
+          </defs>
+          <path fill="url(#g)" d="M12 1.5c.7 5.6 4.9 9.8 10.5 10.5-5.6.7-9.8 4.9-10.5 10.5C11.3 16.9 7.1 12.7 1.5 12 7.1 11.3 11.3 7.1 12 1.5z"/>
+        </svg>
       </div>
     </div>
-  </div>
+
+    <h1 id="title">Taking you to your link</h1>
+    <p class="intro" id="intro">Checking that your saved link is ready. This should only take a moment.</p>
+
+    <div class="badge">
+      <b>12</b><span id="badgeText">MONTHS</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M3 18h18v2H3zM3 7l4.5 4L12 4l4.5 7L21 7l-2 9H5z"/>
+      </svg>
+    </div>
+
+    <div class="status" role="status" aria-live="polite">
+      <i aria-hidden="true"></i>
+      <span id="statusText">Checking saved link</span>
+      <span class="pct" id="pct">8%</span>
+    </div>
+
+    <div class="track" id="progressTrack" role="progressbar" aria-label="Redirect progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="8">
+      <div class="bar" id="bar"></div>
+    </div>
+
+    <div class="features" aria-hidden="true">
+      <div class="f"><svg viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9zM19 16l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/></svg><span id="f1">Smart<br>access</span></div>
+      <div class="f"><svg viewBox="0 0 24 24"><rect x="4" y="10.5" width="16" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 018 0v2.5"/></svg><span id="f2">Secure<br>link</span></div>
+      <div class="f"><svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg><span id="f3">Instant<br>redirect</span></div>
+      <div class="f"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 11-2.3-5.6M20 4v4h-4"/></svg><span id="f4">Always<br>fresh</span></div>
+    </div>
+
+    <!-- Direct Click Fallback Buttons -->
+    <div class="button-group">
+      <a class="btn btn-primary" href="#" id="activateBtn" target="_blank" rel="noopener noreferrer">
+        🚀 Open Google Activation Portal
+      </a>
+      <a class="btn btn-secondary" href="#" id="openAnywayBtn" target="_blank" rel="noopener noreferrer">
+        ⚡ Open Link Anyway (Direct Google)
+      </a>
+    </div>
+
+    <p class="error" id="error" role="alert" aria-live="polite"></p>
+    <button class="retry" id="retry" type="button">Try again</button>
+  </main>
 
   <script>
     (function() {
-      const path = window.location.pathname;
+      const $ = id => document.getElementById(id);
+      const FRESH_FOR_MS = 25 * 60 * 1000; // Google token lifetime (~25 minutes)
+
+      // 1. Extract link parameters from URL search and hash
       const search = window.location.search;
+      const hash = window.location.hash;
       const urlParams = new URLSearchParams(search);
+      const hashParams = new URLSearchParams(hash.replace(/^#\/?/, ''));
 
-      let key = urlParams.get("id") || urlParams.get("token") || "";
-      if (!key) {
-        const pathTokenMatch = path.match(/(AQCP[a-zA-Z0-9_\-+=]{40,})/);
-        if (pathTokenMatch) {
-          key = pathTokenMatch[1];
-        } else if (path.includes("/new/gm/")) {
-          key = path.split("/new/gm/")[1].split("?")[0].split("/")[0];
-        }
+      const linkId = urlParams.get("id") || hashParams.get("id") || "";
+      const directToken = urlParams.get("token") || urlParams.get("t") || hashParams.get("token") || hashParams.get("t") || "";
+      const payloadData = urlParams.get("d") || hashParams.get("d") || urlParams.get("data") || hashParams.get("data") || "";
+      const rawTimestamp = urlParams.get("u") || hashParams.get("u") || "";
+
+      let resolvedLink = "";
+      let updatedAtMs = rawTimestamp ? (Number(rawTimestamp) * 1000) : 0;
+      let busy = false;
+      let shown = 8;
+      let ceiling = 30;
+      let ticker = null;
+
+      // Initial token deduction
+      if (directToken) {
+        resolvedLink = "https://serviceactivation.google.com/subscription/new/" + directToken;
+      } else if (linkId && linkId.startsWith("AQCP")) {
+        resolvedLink = "https://serviceactivation.google.com/subscription/new/" + linkId;
       }
 
-      const rawMobile = urlParams.get("m") || urlParams.get("mobile") || "";
-      if (rawMobile && rawMobile.length >= 10) {
-        const clean = rawMobile.replace(/\D/g, '').slice(-10);
-        document.getElementById("mobileVal").innerText = "+91 " + clean.slice(0, 5) + "*****";
+      const activateBtn = $("activateBtn");
+      const openAnywayBtn = $("openAnywayBtn");
+
+      function updateActionButtons(url) {
+        if (!url) return;
+        resolvedLink = url;
+        activateBtn.href = url;
+        openAnywayBtn.href = url;
       }
 
-      function setGoogleLink(targetUrl) {
-        if (!targetUrl) return;
-        const btn = document.getElementById("activateBtn");
-        btn.href = targetUrl;
-        btn.innerText = "🚀 Open Google Activation Portal";
+      if (resolvedLink) updateActionButtons(resolvedLink);
+
+      // Progress animation system
+      function paint() {
+        $("bar").style.width = shown + "%";
+        $("pct").textContent = Math.round(shown) + "%";
+        $("progressTrack").setAttribute("aria-valuenow", Math.round(shown));
+        const on = Math.min(4, Math.floor(shown / 24));
+        document.querySelectorAll(".f").forEach((el, i) => el.classList.toggle("on", i < on || shown >= 100));
       }
 
-      function markAsUsedUI(usedAt) {
-        const box = document.getElementById("validityBox");
-        const lbl = document.getElementById("statusLabel");
-        const sub = document.getElementById("statusSub");
-        const bdg = document.getElementById("statusBadge");
-        const dot = document.getElementById("statusDot");
-
-        box.className = "validity-box used";
-        dot.style.background = "#ef4444";
-        dot.style.boxShadow = "0 0 8px #ef4444";
-        lbl.innerText = "⚠️ Link Already Claimed / Used";
-        sub.innerText = usedAt ? ("Redeemed on " + new Date(usedAt).toLocaleTimeString()) : "Offer already used on an account";
-        bdg.innerText = "Claimed";
+      function setProgress(val) {
+        ceiling = val;
+        startTicker();
       }
 
-      if (key && key.startsWith("AQCP") && key.length > 50) {
-        setGoogleLink("https://serviceactivation.google.com/subscription/new/" + key);
+      function startTicker() {
+        if (ticker) return;
+        ticker = setInterval(() => {
+          if (shown < ceiling) {
+            shown = Math.min(ceiling, shown + Math.max(0.6, (ceiling - shown) * 0.08));
+            paint();
+          } else if (ceiling >= 100) {
+            clearInterval(ticker);
+            ticker = null;
+          }
+        }, 50);
       }
 
-      if (key) {
-        fetch("/api/link-status?id=" + encodeURIComponent(key))
-          .then(r => r.json())
-          .then(data => {
-            if (data && data.found) {
-              const googleToken = data.token || "";
-              if (googleToken) {
-                setGoogleLink("https://serviceactivation.google.com/subscription/new/" + googleToken);
-              }
-              if (data.mobile && data.mobile !== "+91 **********") {
-                document.getElementById("mobileVal").innerText = data.mobile;
-              }
-              if (data.status === "used") {
-                markAsUsedUI(data.usedAt);
-              }
-            } else if (!key.startsWith("AQCP")) {
-              fetch("/api/refreshLink", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ id: key })
-              })
-              .then(res => res.json())
-              .then(ref => {
-                if (ref && ref.link) {
-                  setGoogleLink(ref.link);
-                }
-              })
-              .catch(() => {});
-            }
-          })
-          .catch(() => {});
-      } else {
-        document.getElementById("activateBtn").innerText = "🤖 Open Telegram Bot";
-        document.getElementById("activateBtn").href = "https://t.me/Geminiplusss_robot";
+      function fail(msg) {
+        busy = false;
+        document.body.classList.add("error");
+        $("statusText").textContent = "Refresh failed";
+        $("error").textContent = msg || "We couldn't get a fresh link. Please tap 'Try again' or open the link manually.";
+        $("retry").disabled = false;
+        shown = 100; ceiling = 100; paint();
       }
 
-      document.getElementById("activateBtn").addEventListener("click", function() {
-        if (key) {
+      function openLink(url) {
+        if (!url || typeof url !== "string") throw new Error("Missing link");
+        updateActionButtons(url);
+        $("statusText").textContent = "Opening link";
+        setProgress(100);
+        document.body.classList.add("done");
+        
+        // Notify usage asynchronously
+        try {
           fetch("/api/mark-used", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id: key, token: key })
+            body: JSON.stringify({ id: linkId, d: payloadData }),
+            keepalive: true
           }).catch(() => {});
+        } catch(e) {}
+
+        setTimeout(() => {
+          window.location.assign(url);
+        }, 450);
+      }
+
+      // Automated 24-hour non-expiring link refresh engine
+      async function refreshAndOpen() {
+        if (busy) return;
+        busy = true;
+        document.body.classList.remove("error");
+        $("error").textContent = "";
+        $("retry").disabled = true;
+        $("statusText").textContent = "Getting a fresh link";
+        shown = Math.min(shown, 30);
+        setProgress(80);
+
+        try {
+          const res = await fetch("/refreshLink", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id: linkId,
+              d: payloadData,
+              token: directToken
+            })
+          });
+
+          const result = await res.json();
+          if (res.ok && result.link) {
+            updateActionButtons(result.link);
+            openLink(result.link);
+            return;
+          }
+
+          // Fallback: If refresh returned existing token, try opening it
+          if (resolvedLink) {
+            openLink(resolvedLink);
+          } else {
+            fail(result.error || "Could not retrieve fresh link from Jio.");
+          }
+        } catch (err) {
+          if (resolvedLink) {
+            openLink(resolvedLink);
+          } else {
+            fail("Network connection error. Tap 'Try again' to reconnect.");
+          }
         }
-      });
+      }
+
+      // Allow multiple clicks on action buttons without glitching
+      function handleActionClick(e) {
+        const target = resolvedLink || this.getAttribute("href");
+        if (target && target !== "#" && target !== "javascript:void(0)") {
+          this.href = target;
+          return true;
+        } else {
+          e.preventDefault();
+          refreshAndOpen();
+        }
+      }
+
+      activateBtn.addEventListener("click", handleActionClick);
+      openAnywayBtn.addEventListener("click", handleActionClick);
+      $("retry").addEventListener("click", refreshAndOpen);
+
+      // Startup execution: Check if link is fresh (< 25 min) or needs refresh
+      paint();
+      startTicker();
+      $("statusText").textContent = "Checking saved link";
+
+      const isFresh = Number.isFinite(updatedAtMs) && updatedAtMs > 0 && (Date.now() - updatedAtMs <= FRESH_FOR_MS);
+
+      if (isFresh && resolvedLink) {
+        try {
+          setProgress(60);
+          openLink(resolvedLink);
+        } catch (_) {
+          refreshAndOpen();
+        }
+      } else {
+        // Needs fresh Google Partner token from Jio session!
+        refreshAndOpen();
+      }
+
+      // Floating stardust background
+      (function () {
+        const c = $("stars");
+        if (!c) return;
+        const x = c.getContext("2d");
+        let w, h, dpr, p = [];
+        function size() {
+          dpr = Math.min(window.devicePixelRatio || 1, 2);
+          w = c.width = window.innerWidth * dpr;
+          h = c.height = window.innerHeight * dpr;
+        }
+        size();
+        window.addEventListener("resize", size);
+        const n = window.innerWidth < 600 ? 40 : 80;
+        for (let i = 0; i < n; i++) {
+          p.push({
+            x: Math.random(),
+            y: Math.random(),
+            r: Math.random() * 1.6 + 0.4,
+            v: Math.random() * 0.00006 + 0.00002,
+            t: Math.random() * 6.28,
+            hue: Math.random() < 0.3 ? 310 : 225
+          });
+        }
+        (function loop() {
+          x.clearRect(0, 0, w, h);
+          for (const s of p) {
+            s.y -= s.v;
+            s.t += 0.03;
+            if (s.y < -0.02) { s.y = 1.02; s.x = Math.random(); }
+            x.globalAlpha = 0.25 + 0.55 * Math.abs(Math.sin(s.t));
+            x.fillStyle = `hsl(${s.hue},100%,80%)`;
+            x.beginPath();
+            x.arc(s.x * w, s.y * h, s.r * dpr, 0, 6.283);
+            x.fill();
+          }
+          requestAnimationFrame(loop);
+        })();
+      })();
     })();
   </script>
 </body>
