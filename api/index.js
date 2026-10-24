@@ -3,35 +3,82 @@
  * --------------------------------
  * Google Gemini Pro AI Activation Gateway for geminiscan.vercel.app
  * Provides:
- * 1. 24-Hour Active Status Guarantee (Zero countdown timer stress)
- * 2. Support for 1️⃣ Basic Link and 2️⃣ Reactivation Link
- * 3. Privacy-shielding (masked phone, 100% hidden on activation)
- * 4. Direct zero-lag 302 redirection to Google's official partner portal
- * 5. Custom domain integration: geminiscan.vercel.app/new/gm/:token
+ * 1. Short Link Resolution (e.g. /new/gm/gm_a9b1c2 -> full Google token)
+ * 2. Real-time Status Checking (/api/link-status) -> 'active', 'used', 'expired'
+ * 3. Real-time Mark Used (/api/mark-used) -> tracks redemptions instantly
+ * 4. 24-Hour Active Status Guarantee & Zero-timer stress
+ * 5. Privacy shielding (masked phone, 100% hidden on activation)
+ * 6. High-speed direct activation route (/go/:id)
  */
 
 const express = require('express');
-const app = express();
+const fs = require('fs');
+const path = require('path');
 
+const app = express();
 const PORT = process.env.PORT || 3000;
 const BOT_USERNAME = process.env.BOT_USERNAME || 'Geminiplusss_robot';
 
 app.use(express.json());
 
-// Anti-cache headers helper to avoid stale cached 302 redirects
-function setNoCacheHeaders(res) {
-  res.set({
-    'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
-    Pragma: 'no-cache',
-    Expires: '0'
-  });
+// Enable CORS and anti-cache headers
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+  res.header('Pragma', 'no-cache');
+  res.header('Expires', '0');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
+// -------------------------------------------------------------
+// Persistent Link Store (Memory + File storage for Vercel /tmp)
+// -------------------------------------------------------------
+const linkStore = new Map();
+
+// Determine file path for persistence (/tmp on Vercel lambdas, ./data locally)
+const STORAGE_DIR = process.env.VERCEL ? '/tmp' : path.join(__dirname, '..', 'data');
+const STORAGE_FILE = path.join(STORAGE_DIR, 'gemini_links.json');
+
+function initStore() {
+  try {
+    if (!fs.existsSync(STORAGE_DIR)) {
+      fs.mkdirSync(STORAGE_DIR, { recursive: true });
+    }
+    if (fs.existsSync(STORAGE_FILE)) {
+      const data = JSON.parse(fs.readFileSync(STORAGE_FILE, 'utf8'));
+      for (const [k, v] of Object.entries(data)) {
+        linkStore.set(k, v);
+      }
+      console.log(`[Store] Loaded ${linkStore.size} links from storage.`);
+    }
+  } catch (err) {
+    console.warn('[Store] Could not load storage file:', err.message);
+  }
 }
+
+function persistStore() {
+  try {
+    const obj = {};
+    for (const [k, v] of linkStore.entries()) {
+      obj[k] = v;
+    }
+    fs.writeFileSync(STORAGE_FILE, JSON.stringify(obj, null, 2), 'utf8');
+  } catch (err) {
+    console.warn('[Store] Could not save storage file:', err.message);
+  }
+}
+
+initStore();
 
 // -------------------------------------------------------------
 // 1. Home / Status Page
 // -------------------------------------------------------------
 app.get('/', (req, res) => {
-  setNoCacheHeaders(res);
   res.send(`
     <!DOCTYPE html>
     <html lang="en">
@@ -113,7 +160,7 @@ app.get('/', (req, res) => {
           <span class="dot"></span> GeminiScan Gateway Active
         </div>
         <h1>geminiscan.vercel.app</h1>
-        <p>Official Google Gemini Pro Partner Activation Gateway & 24-Hour Active Link System.</p>
+        <p>Official Google Gemini Pro Partner Activation Gateway with 24-Hour Active Status & Real-Time Link Verification.</p>
         <a class="bot-link" href="https://t.me/${BOT_USERNAME}" target="_blank">
           🤖 Open Telegram Bot (@${BOT_USERNAME})
         </a>
@@ -124,264 +171,198 @@ app.get('/', (req, res) => {
 });
 
 // -------------------------------------------------------------
-// 2. Exact Activation Route: /new/gm/:token
+// 2. Save Link API (Called by Telegram Bot)
 // -------------------------------------------------------------
-app.get('/new/gm/:token', (req, res) => {
-  setNoCacheHeaders(res);
-  const rawToken = req.params.token || '';
-  const mobile = req.query.m || req.query.mobile || 'Hidden';
-  const typeParam = (req.query.type || 'basic').toLowerCase();
-  const isReactivation = typeParam === 'reactivation';
-  const linkTypeLabel = isReactivation ? 'Reactivation Link' : 'Basic Link';
+app.post('/api/save-link', (req, res) => {
+  const { shortId, token, mobile, type } = req.body;
+  if (!shortId || !token) {
+    return res.status(400).json({ success: false, error: 'shortId and token are required' });
+  }
 
-  // Extract clean Google token if full link or padding was passed
-  const tokenMatch = rawToken.match(/(AQCP[a-zA-Z0-9_\-+=]{40,})/);
-  const token = tokenMatch ? tokenMatch[1] : rawToken;
-  const targetGoogleUrl = `https://serviceactivation.google.com/subscription/new/${token}`;
+  const cleanShortId = shortId.trim();
+  const cleanToken = token.trim();
+  const record = {
+    shortId: cleanShortId,
+    token: cleanToken,
+    mobile: mobile || 'Hidden',
+    type: (type || 'basic').toLowerCase(),
+    status: 'active',
+    createdAt: new Date().toISOString(),
+    usedAt: null,
+    accessCount: 0
+  };
 
-  // Mask mobile number for privacy (e.g. +91 629049****)
+  linkStore.set(cleanShortId, record);
+  // Also index by token
+  linkStore.set(cleanToken, record);
+  persistStore();
+
+  console.log(`[SaveLink] Saved short link: ${cleanShortId} (mobile: ${mobile})`);
+
+  return res.json({
+    success: true,
+    shortId: cleanShortId,
+    url: `https://geminiscan.vercel.app/new/gm/${cleanShortId}`
+  });
+});
+
+// -------------------------------------------------------------
+// 3. Real-Time Link Status Check API: /api/link-status
+// -------------------------------------------------------------
+app.get('/api/link-status', (req, res) => {
+  const queryId = (req.query.id || req.query.token || '').trim();
+  if (!queryId) {
+    return res.status(400).json({ success: false, error: 'id or token parameter is required' });
+  }
+
+  // Check store
+  let record = linkStore.get(queryId);
+
+  // If not found directly, check if it contains an AQCP token
+  if (!record) {
+    const tokenMatch = queryId.match(/(AQCP[a-zA-Z0-9_\-+=]{40,})/);
+    if (tokenMatch) {
+      record = linkStore.get(tokenMatch[1]);
+    }
+  }
+
+  // If still not found, check if it's a raw AQCP Google token
+  if (!record && queryId.startsWith('AQCP') && queryId.length > 50) {
+    return res.json({
+      success: true,
+      found: true,
+      status: 'active',
+      token: queryId,
+      mobile: '+91 **********',
+      type: 'basic',
+      createdAt: new Date().toISOString(),
+      usedAt: null,
+      message: 'Direct Google partner token ready for activation.'
+    });
+  }
+
+  if (!record) {
+    return res.json({
+      success: false,
+      found: false,
+      status: 'not_found',
+      message: 'Link record not found in system.'
+    });
+  }
+
+  // Check if link is older than 24 hours (24h validity guarantee window)
+  const createdTime = new Date(record.createdAt).getTime();
+  const now = Date.now();
+  const hoursElapsed = (now - createdTime) / (1000 * 60 * 60);
+
+  if (record.status !== 'used' && hoursElapsed > 24) {
+    record.status = 'expired';
+    persistStore();
+  }
+
+  // Format masked mobile
   let maskedMobile = '+91 **********';
-  if (mobile && mobile.length >= 10) {
-    const cleanDigits = mobile.replace(/\D/g, '').slice(-10);
+  if (record.mobile && record.mobile.length >= 10) {
+    const cleanDigits = record.mobile.replace(/\D/g, '').slice(-10);
     maskedMobile = `+91 ${cleanDigits.slice(0, 5)}*****`;
   }
 
-  res.send(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Activate Google Gemini Pro | GeminiScan</title>
-      <link rel="preconnect" href="https://fonts.googleapis.com">
-      <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
-      <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-          font-family: 'Plus Jakarta Sans', sans-serif;
-          background: #060911;
-          color: #f1f5f9;
-          min-height: 100vh;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 20px;
-        }
-        .card {
-          background: rgba(15, 23, 42, 0.85);
-          backdrop-filter: blur(24px);
-          border: 1px solid rgba(56, 189, 248, 0.25);
-          border-radius: 28px;
-          padding: 36px 28px;
-          max-width: 460px;
-          width: 100%;
-          text-align: center;
-          box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.85), 0 0 40px rgba(59, 130, 246, 0.15);
-          position: relative;
-          overflow: hidden;
-        }
-        .card::before {
-          content: '';
-          position: absolute;
-          top: -100px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 250px;
-          height: 250px;
-          background: radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, transparent 70%);
-          z-index: 0;
-          pointer-events: none;
-        }
-        .content { position: relative; z-index: 1; }
-        .logo-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          padding: 6px 16px;
-          background: rgba(56, 189, 248, 0.1);
-          color: #38bdf8;
-          border: 1px solid rgba(56, 189, 248, 0.3);
-          border-radius: 9999px;
-          font-size: 13px;
-          font-weight: 700;
-          letter-spacing: 0.5px;
-          text-transform: uppercase;
-          margin-bottom: 18px;
-        }
-        h1 {
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: 24px;
-          font-weight: 700;
-          line-height: 1.3;
-          margin-bottom: 8px;
-          background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-        }
-        .sub-tier {
-          color: #818cf8;
-          font-size: 14px;
-          font-weight: 600;
-          margin-bottom: 22px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 6px;
-        }
-        .validity-box {
-          background: rgba(10, 15, 29, 0.85);
-          border: 1px solid rgba(34, 197, 94, 0.4);
-          border-radius: 18px;
-          padding: 16px 20px;
-          margin-bottom: 22px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
-        .validity-left {
-          text-align: left;
-        }
-        .validity-label {
-          font-size: 11px;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.8px;
-          color: #4ade80;
-          display: flex;
-          align-items: center;
-          gap: 6px;
-        }
-        .validity-sub {
-          font-size: 13px;
-          color: #94a3b8;
-          margin-top: 2px;
-        }
-        .validity-badge {
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: 14px;
-          font-weight: 700;
-          color: #22c55e;
-          background: rgba(34, 197, 94, 0.15);
-          padding: 6px 14px;
-          border-radius: 10px;
-          border: 1px solid rgba(34, 197, 94, 0.3);
-        }
-        .info-pill {
-          display: flex;
-          justify-content: space-between;
-          padding: 12px 16px;
-          background: rgba(2, 6, 23, 0.6);
-          border: 1px solid rgba(255, 255, 255, 0.06);
-          border-radius: 12px;
-          font-size: 13px;
-          margin-bottom: 12px;
-        }
-        .info-pill span:first-child { color: #94a3b8; }
-        .info-pill span:last-child { color: #f8fafc; font-weight: 600; font-family: monospace; }
-        .activate-btn {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 10px;
-          width: 100%;
-          padding: 16px 20px;
-          background: linear-gradient(135deg, #2563eb 0%, #4f46e5 50%, #7c3aed 100%);
-          color: #ffffff;
-          font-weight: 700;
-          font-size: 16px;
-          text-decoration: none;
-          border-radius: 16px;
-          box-shadow: 0 10px 30px -5px rgba(79, 70, 229, 0.6);
-          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-          margin-top: 10px;
-          margin-bottom: 18px;
-        }
-        .activate-btn:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 15px 35px -5px rgba(79, 70, 229, 0.85);
-        }
-        .guidance-box {
-          background: rgba(15, 23, 42, 0.6);
-          border-radius: 14px;
-          padding: 14px 16px;
-          text-align: left;
-          font-size: 12px;
-          color: #94a3b8;
-          line-height: 1.6;
-          border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .guidance-box strong { color: #f1f5f9; }
-      </style>
-    </head>
-    <body>
-      <div class="card">
-        <div class="content">
-          <div class="logo-badge">
-            ✨ Google Gemini Pro ${isReactivation ? 'Reactivation' : 'Activation'}
-          </div>
-          <h1>1-Year Gemini Advanced</h1>
-          <div class="sub-tier">
-            <span>🛡️ ${linkTypeLabel} &bull; Official Partner Link</span>
-          </div>
-
-          <!-- 24-Hour Active Status Banner (No Countdown Timer) -->
-          <div class="validity-box">
-            <div class="validity-left">
-              <div class="validity-label">
-                <span style="display:inline-block; width:8px; height:8px; background:#22c55e; border-radius:50%; box-shadow:0 0 8px #22c55e;"></span>
-                Active Link Protected
-              </div>
-              <div class="validity-sub">Guaranteed Active Status</div>
-            </div>
-            <div class="validity-badge">24H Active</div>
-          </div>
-
-          <div class="info-pill">
-            <span>Link Category:</span>
-            <span style="color:${isReactivation ? '#c084fc' : '#38bdf8'};">${linkTypeLabel}</span>
-          </div>
-
-          <div class="info-pill">
-            <span>Linked Mobile:</span>
-            <span>${maskedMobile}</span>
-          </div>
-
-          <!-- Direct Activation Button -->
-          <a class="activate-btn" href="${targetGoogleUrl}" id="activateBtn" target="_blank" rel="noopener noreferrer">
-            🚀 Open Google Activation Portal
-          </a>
-
-          <div class="guidance-box">
-            <strong>💡 Activation Instructions:</strong><br>
-            1. Tap the button above to launch Google's official partner page.<br>
-            2. Make sure you are signed in to the Google account you wish to upgrade.<br>
-            3. Click <b>"Accept &amp; Activate"</b> to lock in your 12-Month Gemini Pro benefits!
-          </div>
-        </div>
-      </div>
-    </body>
-    </html>
-  `);
+  return res.json({
+    success: true,
+    found: true,
+    shortId: record.shortId,
+    token: record.token,
+    status: record.status, // 'active' | 'used' | 'expired'
+    type: record.type,
+    mobile: maskedMobile,
+    createdAt: record.createdAt,
+    usedAt: record.usedAt,
+    accessCount: record.accessCount || 0
+  });
 });
 
 // -------------------------------------------------------------
-// 3. Direct 302 Redirection Endpoint: /go/:token
+// 4. Mark Link as Used API: /api/mark-used
 // -------------------------------------------------------------
-app.get('/go/:token', (req, res) => {
-  setNoCacheHeaders(res);
-  const token = req.params.token || '';
-  const tokenMatch = token.match(/(AQCP[a-zA-Z0-9_\-+=]{40,})/);
-  const cleanToken = tokenMatch ? tokenMatch[1] : token;
-  return res.redirect(302, `https://serviceactivation.google.com/subscription/new/${cleanToken}`);
+app.post('/api/mark-used', (req, res) => {
+  const { id, token } = req.body;
+  const targetKey = (id || token || '').trim();
+
+  let record = linkStore.get(targetKey);
+  if (!record && token) {
+    record = linkStore.get(token.trim());
+  }
+
+  if (record) {
+    record.status = 'used';
+    record.usedAt = new Date().toISOString();
+    record.accessCount = (record.accessCount || 0) + 1;
+    persistStore();
+    console.log(`[MarkUsed] Link marked as used: ${record.shortId}`);
+    return res.json({
+      success: true,
+      status: 'used',
+      usedAt: record.usedAt
+    });
+  }
+
+  return res.json({
+    success: false,
+    message: 'Link record not found to mark as used'
+  });
 });
 
 // -------------------------------------------------------------
-// 4. Health Check
+// 5. Short Link Detail API: /api/link/:id
+// -------------------------------------------------------------
+app.get('/api/link/:id', (req, res) => {
+  const id = req.params.id;
+  const record = linkStore.get(id);
+  if (!record) {
+    return res.status(404).json({ error: 'Short link not found' });
+  }
+
+  return res.json({
+    shortId: record.shortId,
+    token: record.token,
+    status: record.status,
+    type: record.type,
+    targetUrl: `https://serviceactivation.google.com/subscription/new/${record.token}`
+  });
+});
+
+// -------------------------------------------------------------
+// 6. Direct 302 Redirection Gateway: /go/:tokenOrId
+// -------------------------------------------------------------
+app.get('/go/:tokenOrId', (req, res) => {
+  const raw = req.params.tokenOrId || '';
+
+  // Look up in store
+  const record = linkStore.get(raw);
+  let finalToken = raw;
+
+  if (record) {
+    finalToken = record.token;
+    record.accessCount = (record.accessCount || 0) + 1;
+    persistStore();
+  } else {
+    const tokenMatch = raw.match(/(AQCP[a-zA-Z0-9_\-+=]{40,})/);
+    if (tokenMatch) {
+      finalToken = tokenMatch[1];
+    }
+  }
+
+  return res.redirect(302, `https://serviceactivation.google.com/subscription/new/${finalToken}`);
+});
+
+// -------------------------------------------------------------
+// 7. Health Check
 // -------------------------------------------------------------
 app.get('/health', (req, res) => {
   res.json({
     status: 'ok',
     domain: 'geminiscan.vercel.app',
+    linksTracked: linkStore.size,
     time: new Date().toISOString()
   });
 });

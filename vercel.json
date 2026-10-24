@@ -2,12 +2,16 @@
   "version": 2,
   "rewrites": [
     {
-      "source": "/new/gm/(.*)",
-      "destination": "/index.html"
+      "source": "/api/(.*)",
+      "destination": "/api"
     },
     {
       "source": "/go/(.*)",
       "destination": "/api"
+    },
+    {
+      "source": "/new/gm/(.*)",
+      "destination": "/index.html"
     },
     {
       "source": "/(.*)",

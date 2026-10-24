@@ -1,0 +1,22 @@
+{
+  "gm_test1234": {
+    "shortId": "gm_test1234",
+    "token": "AQCP_test_token_google_gemini_pro_demo",
+    "mobile": "9876543210",
+    "type": "basic",
+    "status": "used",
+    "createdAt": "2026-10-24T18:05:31.665Z",
+    "usedAt": "2026-10-24T18:05:31.678Z",
+    "accessCount": 1
+  },
+  "AQCP_test_token_google_gemini_pro_demo": {
+    "shortId": "gm_test1234",
+    "token": "AQCP_test_token_google_gemini_pro_demo",
+    "mobile": "9876543210",
+    "type": "basic",
+    "status": "used",
+    "createdAt": "2026-10-24T18:05:31.665Z",
+    "usedAt": "2026-10-24T18:05:31.678Z",
+    "accessCount": 1
+  }
+}
