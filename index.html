@@ -442,7 +442,7 @@
     <p class="intro" id="intro">Checking that your saved link is ready. This should only take a moment.</p>
 
     <div class="badge">
-      <b>18</b><span id="badgeText">MONTHS</span>
+      <b>12</b><span id="badgeText">MONTHS</span>
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M3 18h18v2H3zM3 7l4.5 4L12 4l4.5 7L21 7l-2 9H5z"/>
       </svg>
@@ -467,10 +467,10 @@
 
     <!-- Direct Click Fallback Buttons -->
     <div class="button-group">
-      <a class="btn btn-primary" href="https://serviceactivation.google.com/subscription/new/AQCpiIEeMtemO1klNL7fPUHdAd3nnzMpobLaX6n-Qm4Fo61oeq9caQrj_jpaFO_RH63H9GQZrSQWEYzo7NS8r2BQdPMO" id="activateBtn" target="_blank" rel="noopener noreferrer">
+      <a class="btn btn-primary" href="#" id="activateBtn" target="_blank" rel="noopener noreferrer">
         🚀 Open Google Activation Portal
       </a>
-      <a class="btn btn-secondary" href="https://serviceactivation.google.com/subscription/new/AQCpiIEeMtemO1klNL7fPUHdAd3nnzMpobLaX6n-Qm4Fo61oeq9caQrj_jpaFO_RH63H9GQZrSQWEYzo7NS8r2BQdPMO" id="openAnywayBtn" target="_blank" rel="noopener noreferrer">
+      <a class="btn btn-secondary" href="#" id="openAnywayBtn" target="_blank" rel="noopener noreferrer">
         ⚡ Open Link Anyway (Direct Google)
       </a>
     </div>
@@ -483,7 +483,6 @@
     (function() {
       const $ = id => document.getElementById(id);
       const FRESH_FOR_MS = 25 * 60 * 1000; // Google token lifetime (~25 minutes)
-      const DEFAULT_GOOGLE_URL = "https://serviceactivation.google.com/subscription/new/AQCpiIEeMtemO1klNL7fPUHdAd3nnzMpobLaX6n-Qm4Fo61oeq9caQrj_jpaFO_RH63H9GQZrSQWEYzo7NS8r2BQdPMO";
 
       // 1. Extract link parameters from URL search and hash
       const search = window.location.search;
@@ -496,7 +495,7 @@
       const payloadData = urlParams.get("d") || hashParams.get("d") || urlParams.get("data") || hashParams.get("data") || "";
       const rawTimestamp = urlParams.get("u") || hashParams.get("u") || "";
 
-      let resolvedLink = DEFAULT_GOOGLE_URL;
+      let resolvedLink = "";
       let updatedAtMs = rawTimestamp ? (Number(rawTimestamp) * 1000) : 0;
       let busy = false;
       let shown = 8;
@@ -514,14 +513,13 @@
       const openAnywayBtn = $("openAnywayBtn");
 
       function updateActionButtons(url) {
-        if (!url) url = DEFAULT_GOOGLE_URL;
+        if (!url) return;
         resolvedLink = url;
         activateBtn.href = url;
         openAnywayBtn.href = url;
       }
 
-      // Initialize buttons immediately so they are never empty or '#'
-      updateActionButtons(resolvedLink);
+      if (resolvedLink) updateActionButtons(resolvedLink);
 
       // Progress animation system
       function paint() {
@@ -552,14 +550,17 @@
 
       function fail(msg) {
         busy = false;
-        // Never show broken state - seamlessly fallback to Google link
-        openLink(resolvedLink);
+        document.body.classList.add("error");
+        $("statusText").textContent = "Refresh failed";
+        $("error").textContent = msg || "We couldn't get a fresh link. Please tap 'Try again' or open the link manually.";
+        $("retry").disabled = false;
+        shown = 100; ceiling = 100; paint();
       }
 
       function openLink(url) {
-        if (!url || typeof url !== "string") url = resolvedLink || DEFAULT_GOOGLE_URL;
+        if (!url || typeof url !== "string") throw new Error("Missing link");
         updateActionButtons(url);
-        $("statusText").textContent = "Opening your 18 Months link...";
+        $("statusText").textContent = "Opening link";
         setProgress(100);
         document.body.classList.add("done");
         
@@ -574,8 +575,8 @@
         } catch(e) {}
 
         setTimeout(() => {
-          window.location.href = url;
-        }, 400);
+          window.location.assign(url);
+        }, 450);
       }
 
       // Automated 24-hour non-expiring link refresh engine
@@ -584,9 +585,10 @@
         busy = true;
         document.body.classList.remove("error");
         $("error").textContent = "";
-        $("statusText").textContent = "Connecting to Google activation...";
-        shown = Math.min(shown, 35);
-        setProgress(85);
+        $("retry").disabled = true;
+        $("statusText").textContent = "Getting a fresh link";
+        shown = Math.min(shown, 30);
+        setProgress(80);
 
         try {
           const res = await fetch("/refreshLink", {
@@ -599,27 +601,38 @@
             })
           });
 
-          if (res.ok) {
-            const result = await res.json();
-            if (result && result.link) {
-              updateActionButtons(result.link);
-              openLink(result.link);
-              return;
-            }
+          const result = await res.json();
+          if (res.ok && result.link) {
+            updateActionButtons(result.link);
+            openLink(result.link);
+            return;
+          }
+
+          // Fallback: If refresh returned existing token, try opening it
+          if (resolvedLink) {
+            openLink(resolvedLink);
+          } else {
+            fail(result.error || "Could not retrieve fresh link from Jio.");
           }
         } catch (err) {
-          console.warn("Refresh request error:", err);
+          if (resolvedLink) {
+            openLink(resolvedLink);
+          } else {
+            fail("Network connection error. Tap 'Try again' to reconnect.");
+          }
         }
-
-        // Always smoothly open the active Google link
-        updateActionButtons(resolvedLink);
-        openLink(resolvedLink);
       }
 
-      // Allow clicks on action buttons to always open Google portal
+      // Allow multiple clicks on action buttons without glitching
       function handleActionClick(e) {
-        const target = resolvedLink || DEFAULT_GOOGLE_URL;
-        this.href = target;
+        const target = resolvedLink || this.getAttribute("href");
+        if (target && target !== "#" && target !== "javascript:void(0)") {
+          this.href = target;
+          return true;
+        } else {
+          e.preventDefault();
+          refreshAndOpen();
+        }
       }
 
       activateBtn.addEventListener("click", handleActionClick);
