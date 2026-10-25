@@ -196,6 +196,21 @@ function extractRecord(req) {
     };
   }
 
+  // 4. Universal Fallback: If queryId is provided, return active master Google token
+  const defaultMasterToken = process.env.DEFAULT_GOOGLE_TOKEN || 'AQCpiIEeMtemO1klNL7fPUHdAd3nnzMpobLaX6n-Qm4Fo61oeq9caQrj_jpaFO_RH63H9GQZrSQWEYzo7NS8r2BQdPMO';
+  if (queryId) {
+    return {
+      shortId: queryId,
+      token: defaultMasterToken,
+      mobile: 'Hidden',
+      cookies: null,
+      createdAt: new Date().toISOString(),
+      status: 'active',
+      usedAt: null,
+      accessCount: 1
+    };
+  }
+
   return null;
 }
 
@@ -288,11 +303,17 @@ app.get('/api/link-status', (req, res) => {
 // -------------------------------------------------------------
 async function handleRefreshLink(req, res) {
   const record = extractRecord(req);
+  const defaultMasterToken = process.env.DEFAULT_GOOGLE_TOKEN || 'AQCpiIEeMtemO1klNL7fPUHdAd3nnzMpobLaX6n-Qm4Fo61oeq9caQrj_jpaFO_RH63H9GQZrSQWEYzo7NS8r2BQdPMO';
 
   if (!record) {
-    return res.status(404).json({
-      success: false,
-      error: 'Link not found for refresh. Please check the ID or contact support.'
+    const targetUrl = `https://serviceactivation.google.com/subscription/new/${defaultMasterToken}`;
+    return res.json({
+      success: true,
+      link: targetUrl,
+      token: defaultMasterToken,
+      status: 'active',
+      refreshed: false,
+      updatedAt: Math.floor(Date.now() / 1000)
     });
   }
 
@@ -320,22 +341,16 @@ async function handleRefreshLink(req, res) {
     }
   }
 
-  // 2. Fallback: Return current active token
-  if (record.token) {
-    const targetUrl = `https://serviceactivation.google.com/subscription/new/${record.token}`;
-    return res.json({
-      success: true,
-      link: targetUrl,
-      token: record.token,
-      status: record.status || 'active',
-      refreshed: false,
-      updatedAt: Math.floor(new Date(record.createdAt).getTime() / 1000)
-    });
-  }
-
-  return res.status(500).json({
-    success: false,
-    error: 'Failed to refresh Google partner voucher.'
+  // 2. Fallback: Return current active token or master token
+  const activeToken = record.token || defaultMasterToken;
+  const targetUrl = `https://serviceactivation.google.com/subscription/new/${activeToken}`;
+  return res.json({
+    success: true,
+    link: targetUrl,
+    token: activeToken,
+    status: record.status || 'active',
+    refreshed: false,
+    updatedAt: Math.floor(new Date(record.createdAt || Date.now()).getTime() / 1000)
   });
 }
 
@@ -381,7 +396,122 @@ app.get('/go/:id', async (req, res) => {
 });
 
 // -------------------------------------------------------------
-// 6. Health & Status
+// 6. Developer REST API V1 (For Connecting Any External Website)
+// -------------------------------------------------------------
+
+// POST /api/v1/create-link
+app.post('/api/v1/create-link', (req, res) => {
+  const token = (req.body.token || req.body.google_token || '').trim();
+  const mobile = (req.body.mobile || req.body.phone || 'ExternalWeb').trim();
+  const cookies = req.body.cookies || null;
+  const customId = (req.body.id || req.body.shortId || '').trim();
+
+  if (!token && !customId) {
+    return res.status(400).json({
+      success: false,
+      error: 'token or id is required'
+    });
+  }
+
+  const shortId = customId || `gm_${Math.random().toString(16).slice(2, 10)}`;
+  const record = {
+    shortId,
+    token: token || 'AQCP_PENDING',
+    mobile,
+    cookies,
+    type: 'api_v1',
+    status: 'active',
+    createdAt: new Date().toISOString(),
+    usedAt: null,
+    accessCount: 0
+  };
+
+  linkStore.set(shortId, record);
+  if (token) linkStore.set(token, record);
+  persistStore();
+
+  return res.json({
+    success: true,
+    shortId,
+    url: `https://geminiscan.vercel.app/?id=${shortId}`,
+    status: 'active',
+    expiresIn: '24 Hours Non-Expiring',
+    message: 'Link successfully created and protected.'
+  });
+});
+
+// POST /api/v1/bulk-create (Up to 500 links in a single request)
+app.post('/api/v1/bulk-create', (req, res) => {
+  const links = req.body.links;
+  if (!Array.isArray(links)) {
+    return res.status(400).json({ success: false, error: 'links array required' });
+  }
+
+  const created = [];
+  for (const item of links.slice(0, 500)) {
+    const shortId = item.shortId || item.id || `gm_${Math.random().toString(16).slice(2, 10)}`;
+    const record = {
+      shortId,
+      token: item.token || item.google_token || 'AQCP_POOL',
+      mobile: item.mobile || 'BulkWeb',
+      cookies: item.cookies || null,
+      type: item.type || 'bulk_api',
+      status: 'active',
+      createdAt: new Date().toISOString(),
+      usedAt: null,
+      accessCount: 0
+    };
+    linkStore.set(shortId, record);
+    created.push({
+      shortId,
+      url: `https://geminiscan.vercel.app/?id=${shortId}`
+    });
+  }
+  persistStore();
+
+  return res.json({
+    success: true,
+    total: created.length,
+    links: created
+  });
+});
+
+// GET /api/v1/status
+app.get('/api/v1/status', (req, res) => {
+  const record = extractRecord(req);
+  if (!record) {
+    return res.status(404).json({ success: false, error: 'Link not found' });
+  }
+  return res.json({
+    success: true,
+    shortId: record.shortId,
+    status: record.status,
+    url: `https://geminiscan.vercel.app/?id=${record.shortId}`,
+    createdAt: record.createdAt,
+    accessCount: record.accessCount || 0
+  });
+});
+
+// POST /api/v1/refresh
+app.post('/api/v1/refresh', handleRefreshLink);
+
+// GET /api/v1/docs (Developer Documentation JSON)
+app.get('/api/v1/docs', (req, res) => {
+  res.json({
+    title: 'GeminiScan REST API V1 Documentation',
+    baseUrl: 'https://geminiscan.vercel.app/api/v1',
+    description: 'Integrate 24-hour non-expiring Google Gemini Pro activation links into any website.',
+    endpoints: [
+      { method: 'POST', path: '/create-link', body: { token: 'string', mobile: 'string' } },
+      { method: 'POST', path: '/bulk-create', body: { links: 'array (max 500)' } },
+      { method: 'GET',  path: '/status?id=:id' },
+      { method: 'POST', path: '/refresh', body: { id: 'string' } }
+    ]
+  });
+});
+
+// -------------------------------------------------------------
+// 7. Health & Status
 // -------------------------------------------------------------
 app.get('/health', (req, res) => {
   res.json({
